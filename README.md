@@ -30,3 +30,7 @@ step4
     - javascript 코드 작성하기 시작
     - Form Load Event 핸들링 하기
     - Form Submit 핸들링 하기
+    - 사용자가 입력한 데이터를 Form Data에 저장하기
+step5
+    - 입력한 데이터를 검증하는 validate() 함수구현하기
+    -
