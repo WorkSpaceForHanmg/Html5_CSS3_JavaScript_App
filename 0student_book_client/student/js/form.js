@@ -70,7 +70,8 @@ function validateStudent(student) {// 필수 필드 검사
         return false;
     }
     // 학번 형식 검사 (예: 영문과 숫자 조합)
-    const studentNumberPattern = /^[A-Za-z0-9]+$/;
+    //const studentNumberPattern = /^[A-Za-z0-9]+$/;
+    const studentNumberPattern = /^s\d{5}$/;
     if (!studentNumberPattern.test(student.studentNumber)) {
         alert("학번은 영문과 숫자만 입력 가능합니다.");
         return false;
