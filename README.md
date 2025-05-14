@@ -25,3 +25,4 @@ step2 - form 내부의 input과 table 에 CSS 추가
 step3 
     - form.css 파일로 분리하기 
     - form 내부의 input에 form-group, form-grid css 추가
+    - form.css 에 form-grid, form-grid 클래스 추가하기

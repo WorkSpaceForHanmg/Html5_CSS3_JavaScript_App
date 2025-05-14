@@ -9,7 +9,7 @@
   <body>
     <h1>학생 관리 시스템</h1>
 
-    <div>
+    <div class="form-container">
       <h2>학생 등록</h2>
       <form id="studentForm">
         <div class="form-grid">
@@ -17,7 +17,7 @@
             <label for="name">이름:</label>
             <input type="text" name="name" id="name" />
           </div>
-          
+
           <div class="form-group">
             <label for="studentNumber">학번:</label>
             <input type="text" name="studentNumber" id="studentNumber" />
@@ -38,7 +38,7 @@
               pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
             />
           </div>
-
+          
           <div class="form-group">
             <label for="email">이메일:</label>
             <input
@@ -53,12 +53,13 @@
             <label for="dateOfBirth">생년월일:</label>
             <input type="date" name="dateOfBirth" id="dateOfBirth" />
           </div>
+          
           <button type="submit">학생 등록</button>
         </div>
       </form>
     </div>
 
-    <div>
+    <div class="table-container">
       <h2>학생 목록</h2>
       <table>
         <thead>
