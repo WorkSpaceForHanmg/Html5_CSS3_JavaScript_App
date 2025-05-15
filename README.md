@@ -34,4 +34,6 @@ step4
 step5
     - javascript code를 form.js 파일로 분리하기 
     - 입력한 데이터를 검증하는 validate() 함수구현하기
-    
+step06
+    - GET /api/students 서버와 통신하는 loadStudents() 구현 fetch 함수사용
+    - renderStudentTable() 구현 table에 목록을 동적으로 출력하기 
