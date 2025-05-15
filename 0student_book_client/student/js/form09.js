@@ -1,10 +1,13 @@
 //전역변수
 const API_BASE_URL = "http://localhost:8080";
+//현재 수정중인 학생 ID
+let editingStudentId = null;
 
 //DOM 엘리먼트 가져오기
 const studentForm = document.getElementById("studentForm");
 const studentTableBody = document.getElementById("studentTableBody");
 const cancelButton = studentForm.querySelector('.cancel-btn');
+const submitButton = studentForm.querySelector('button[type="submit"]');
 
 //Document Load 이벤트 처리하기
 document.addEventListener("DOMContentLoaded", function () {
@@ -215,8 +218,8 @@ function deleteStudent(studentId) {
 }
 
 //학생 수정전에 데이터 로드하는 함수
-function editStudent(student) {
-    fetch(`${API_BASE_URL}/api/students/${studentId}`) //메서드를 생략하면 조회이다.
+function editStudent(studentId) {
+    fetch(`${API_BASE_URL}/api/students/${studentId}`)
         .then(async (response) => {
             if (!response.ok) {
                 //응답 본문을 읽어서 에러 메시지 추출
@@ -224,18 +227,41 @@ function editStudent(student) {
                 //status code와 message를 확인하기
                 if (response.status === 404) {
                     //중복 오류 처리
-                    throw new Error(errorData.message || '존재하지 않는 학생입니다다.');
-                } 
+                    throw new Error(errorData.message || '존재하지 않는 학생입니다.');
+                }
             }
             return response.json();
         })
         .then((student) => {
-            //Form에 데이터 채우기 
+            //Form에 데이터 채우기
             studentForm.name.value = student.name;
             studentForm.studentNumber.value = student.studentNumber;
+            if(student.detail) {
+                studentForm.address.value = student.detail.address;
+                studentForm.phoneNumber.value = student.detail.phoneNumber;
+                studentForm.email.value = student.detail.email;
+                studentForm.dateOfBirth.value = student.detail.dateOfBirth || '';
+            }
+
+            //수정 Mode 설정
+            editingStudentId = studentId;
+            //버튼의 타이틀을 등록 > 수정으로 변경
+            submitButton.textContent = "학생 수정";
+            //취소 버튼을 활성화
+            cancelButton.style.display = 'inline-block';
+            
         })
         .catch((error) => {
             console.log('Error : ', error);
             alert(error.message);
         });
+
+}
+
+function resetForm(){
+    //form 초기화
+    studentForm.reset();
+    editingStudentId = null;
+    submitButton.textContent = "학생 등록";
+    cancelButton.style.display = "none";
 }
