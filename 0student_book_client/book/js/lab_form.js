@@ -1,92 +1,108 @@
-//전역변수
-const API_BASE_URL = "http://localhost:8080";
+// 전역 변수
+const API_BASE_URL = 'http://localhost:8080';
 
-//DOM 엘리먼트 가져오기
-const bookForm = document.getElementById("bookForm");
-const bookTableBody = document.getElementById("bookTableBody");
+// DOM 요소 참조
+const bookForm = document.getElementById('bookForm');
+const bookTableBody = document.getElementById('bookTableBody');
 
-// 페이지가 로드되면 도서 목록을 로드
-document.addEventListener("DOMContentLoaded", function () {
+// 초기화
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('페이지 로드 완료');
     loadBooks();
 });
 
-// 도서 등록 폼 제출 이벤트 처리
-bookForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    console.log("bookForm 제출 되었음...");
+// 폼 제출 이벤트 핸들러
+bookForm.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-    // FormData 객체 생성
-    const bookFormData = new FormData(bookForm);
-    bookFormData.forEach((value, key) => {
-        console.log(key + ' = ' + value);
-
-    });
-
-    // 도서 객체 생성
+    // 폼 데이터 수집
+    const formData = new FormData(bookForm);
     const bookData = {
-        title: bookFormData.get("title").trim(),
-        author: bookFormData.get("author").trim(),
-        isbn: bookFormData.get("isbn").trim(),
-        price: bookFormData.get("price").trim(),
-        publishDate: bookFormData.get("publishDate"),
+        title: formData.get('title').trim(),
+        author: formData.get('author').trim(),
+        isbn: formData.get('isbn').trim(),
+        price: formData.get('price') ? parseInt(formData.get('price')) : null,
+        publishDate: formData.get('publishDate') || null,
+        detailRequest: {
+            description: formData.get('description').trim() || null,
+            language: formData.get('language').trim() || null,
+            pageCount: formData.get('pageCount') ? parseInt(formData.get('pageCount')) : null,
+            publisher: formData.get('publisher').trim() || null,
+            coverImageUrl: formData.get('coverImageUrl').trim() || null,
+            edition: formData.get('edition').trim() || null
+        }
     };
 
-    //유효성 체크하기
+    // 유효성 검사
     if (!validateBook(bookData)) {
-        //검증체크 실패하면 리턴하기
         return;
     }
-    //유효한 데이터 출력
-    console.log(bookData);
+
+    console.log('유효한 데이터:', bookData);
 });
 
-//데이터 유효성을 체크하는 함수
+// 도서 데이터 유효성 검사
 function validateBook(book) {
     // 필수 필드 검사
     if (!book.title) {
-        alert("책 제목을 입력해주세요.");
+        alert('제목을 입력해주세요.');
         return false;
     }
 
     if (!book.author) {
-        alert("저자를 입력해주세요.");
+        alert('저자를 입력해주세요.');
         return false;
     }
 
     if (!book.isbn) {
-        alert("ISBN을 입력해주세요.");
+        alert('ISBN을 입력해주세요.');
         return false;
     }
 
     if (!book.price) {
-        alert("가격을 입력해주세요.");
+        alert('가격을 입력해주세요.');
         return false;
     }
 
-    if (!book.publishDate) {
-        alert("출판일을 입력해주세요.");
-        return false;
-    }
-
-    // ISBN 형식 검사 (예: 13자리 숫자)
-    const isbnPattern = /^\d{13}$/;
+    // ISBN 형식 검사 (기본적인 영숫자 조합)
+    const isbnPattern = /^[0-9X-]+$/;
     if (!isbnPattern.test(book.isbn)) {
-        alert("ISBN은 13자리 숫자만 입력 가능합니다.");
+        alert('올바른 ISBN 형식이 아닙니다. (숫자와 X, -만 허용)');
         return false;
     }
 
-    // 가격은 양수여야 한다
-    if (book.price <= 0) {
-        alert("가격은 0보다 큰 값이어야 합니다.");
+    // 가격 유효성 검사
+    if (book.price !== null && book.price < 0) {
+        alert('가격은 0 이상이어야 합니다.');
+        return false;
+    }
+
+    // 페이지 수 유효성 검사
+    if (book.bookDetail.pageCount !== null && book.bookDetail.pageCount < 0) {
+        alert('페이지 수는 0 이상이어야 합니다.');
+        return false;
+    }
+
+    // URL 형식 검사 (입력된 경우에만)
+    if (book.bookDetail.coverImageUrl && !isValidUrl(book.bookDetail.coverImageUrl)) {
+        alert('올바른 이미지 URL 형식이 아닙니다.');
         return false;
     }
 
     return true;
 }
 
+// URL 유효성 검사
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
 
-
-//도서목록 로드 함수
+// 도서 목록 로드 함수
 function loadBooks() {
-    console.log("도서 목록 로드 중.....");
+    console.log('도서 목록 로드 중...');
 }
