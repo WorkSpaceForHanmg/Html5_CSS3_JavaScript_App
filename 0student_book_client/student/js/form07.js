@@ -40,9 +40,38 @@ studentForm.addEventListener("submit", function (event) {
         return;
     }
     //유효한 데이터 출력하기
-    console.log(studentData);
+    // console.log(studentData);
+
+    //서버로 Student 등록 요청하기
+    createStudent(studentData);
+
 
 });
+
+//Student 등록 함수
+function createStudent(studentData){
+    fetch(`${API_BASE_URL}/api/students`,{
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(studentData)       //Object => json
+    })
+    .then(async (response) => {
+        if(!response){
+            //응답 본문을 읽어서 에러 메시지 추출
+            const errorData = await response.json();
+            //status code와 message를 확인하기
+            if(response.status == 409){
+                //중복 오류처리
+                throw new Error(errorData.message || '중복되는 정보가 있습니다._.');
+            }else{
+                throw new Error(errorData.message || '학생 등록에 실패했습니다!..')
+            }
+        }
+        return response.json();
+    })
+    .catch();
+}
+
 
 //데이터 유효성을 체크하는 함수
 function validateStudent(student) {// 필수 필드 검사
@@ -131,7 +160,6 @@ function renderStudentTable(students) {
                     <td>${student.studentNumber}</td>
                     <td>${student.detail ? student.detail.address : "-"}</td>
                     <td>${student.detail ? student.detail.phoneNumber : "-"}</td>
-                    // <td>${student.detail ? student.detail.email || "-" : "-"}</td>
                     <td>${student.detail?.email ?? "-"}</td>
                     <td>${student.detail ? student.detail.dateOfBirth || "-" : "-"}</td>
                     <td>
