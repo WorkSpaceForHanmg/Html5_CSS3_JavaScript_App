@@ -47,7 +47,7 @@ studentForm.addEventListener("submit", function (event) {
     //console.log(studentData);
 
     if (editingStudentId) {
-        
+        updateStudent(editingStudentId, studentData);
     } else {
         //서버로 Student 등록 요청하기
         createStudent(studentData);
@@ -266,5 +266,6 @@ function resetForm() {
     studentForm.reset();
     editingStudentId = null;
     submitButton.textContent = "학생 등록";
+    //취소버튼 않보이게 
     cancelButton.style.display = "none";
 }
