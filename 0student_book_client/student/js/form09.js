@@ -46,7 +46,9 @@ studentForm.addEventListener("submit", function (event) {
     //유효한 데이터 출력하기
     //console.log(studentData);
 
+    //현재 수정중인 학생 ID가 있으면 
     if (editingStudentId) {
+        //서버로 Student 수정 요청하기
         updateStudent(editingStudentId, studentData);
     } else {
         //서버로 Student 등록 요청하기
@@ -260,7 +262,7 @@ function editStudent(studentId) {
         });
 
 }
-
+// 수정 모드에서 등록 모드로 초기화 하는 함수
 function resetForm() {
     //form 초기화
     studentForm.reset();
@@ -268,4 +270,38 @@ function resetForm() {
     submitButton.textContent = "학생 등록";
     //취소버튼 않보이게 
     cancelButton.style.display = "none";
+}
+
+//학생 수정처리하는 함수
+function updateStudent(sutdnetId, studentData) {
+    fetch(`${API_BASE_URL}/api/students/${studentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(studentData)  //Object => json
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                //응답 본문을 읽어서 에러 메시지 추출
+                const errorData = await response.json();
+                //status code와 message를 확인하기
+                if (response.status === 409) {
+                    //중복 오류 처리
+                    throw new Error(errorData.message || '중복 되는 정보가 있습니다.');
+                } else {
+                    //기타 오류 처리
+                    throw new Error(errorData.message || '학생 등록에 실패했습니다.')
+                }
+            }
+            return response.json();
+        })
+        .then((result) => {
+            alert("학생이 성공적으로 등록되었습니다!");
+            studentForm.reset();
+            //목록 새로 고침
+            loadStudents();
+        })
+        .catch((error) => {
+            console.log('Error : ', error);
+            alert(error.message);
+        });
 }
