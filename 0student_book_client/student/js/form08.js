@@ -47,40 +47,6 @@ studentForm.addEventListener("submit", function (event) {
 
 });
 
-//Student 등록 함수
-function createStudent(studentData) {
-    fetch(`${API_BASE_URL}/api/students`,{
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify(studentData)  //Object => json
-    })
-    .then(async (response) => {
-        if(!response.ok) {
-            //응답 본문을 읽어서 에러 메시지 추출
-            const errorData = await response.json();
-            //status code와 message를 확인하기
-            if(response.status === 409){
-                //중복 오류 처리
-                throw new Error(errorData.message || '중복 되는 정보가 있습니다.');
-            }else {
-                //기타 오류 처리
-                throw new Error(errorData.message || '학생 등록에 실패했습니다.')
-            }
-        }
-        return response.json();
-    })
-    .then((result) => {
-        alert("학생이 성공적으로 등록되었습니다!");
-        studentForm.reset();
-        //목록 새로 고침
-        loadStudents(); 
-    })
-    .catch((error) => {
-        console.log('Error : ', error);
-        alert(error.message);
-    });
-}
-
 //데이터 유효성을 체크하는 함수
 function validateStudent(student) {// 필수 필드 검사
     if (!student.name) {
@@ -109,7 +75,7 @@ function validateStudent(student) {// 필수 필드 검사
     }
     // 학번 형식 검사 (예: 영문과 숫자 조합)
     //const studentNumberPattern = /^[A-Za-z0-9]+$/;
-    const studentNumberPattern = /^s\d{5}$/;
+    const studentNumberPattern = /^S\d{5}$/;
     if (!studentNumberPattern.test(student.studentNumber)) {
         alert("학번은 영문과 숫자만 입력 가능합니다.");
         return false;
@@ -161,7 +127,7 @@ function renderStudentTable(students) {
     students.forEach((student) => {
         //<tr> 엘리먼트를 생성하기
         const row = document.createElement("tr");
-        
+
         //<tr>의 content을 동적으로 생성
         row.innerHTML = `
                     <td>${student.name}</td>
@@ -178,4 +144,50 @@ function renderStudentTable(students) {
         //<tbody>의 아래에 <tr>을 추가시켜 준다.
         studentTableBody.appendChild(row);
     });
+}
+
+//Student 등록 함수
+function createStudent(studentData) {
+    fetch(`${API_BASE_URL}/api/students`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(studentData)  //Object => json
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                //응답 본문을 읽어서 에러 메시지 추출
+                const errorData = await response.json();
+                //status code와 message를 확인하기
+                if (response.status === 409) {
+                    //중복 오류 처리
+                    throw new Error(errorData.message || '중복 되는 정보가 있습니다.');
+                } else {
+                    //기타 오류 처리
+                    throw new Error(errorData.message || '학생 등록에 실패했습니다.')
+                }
+            }
+            return response.json();
+        })
+        .then((result) => {
+            alert("학생이 성공적으로 등록되었습니다!");
+            studentForm.reset();
+            //목록 새로 고침
+            loadStudents();
+        })
+        .catch((error) => {
+            console.log('Error : ', error);
+            alert(error.message);
+        });
+}
+
+//학생 삭제 함수
+function deleteStudent(studentId) {
+    if(!confirm(`ID = ${studentId} 인 학생을 정말로 삭제하시겠습니까?`)){
+        return;
+    }
+    console.log('삭제처리 ...');
+    fetch(`${API_BASE_URL}/api/students/${studentId}`,{
+        method: 'DELETE'
+    })
+    
 }
