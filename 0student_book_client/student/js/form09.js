@@ -229,7 +229,11 @@ function editStudent(student) {
             }
             return response.json();
         })
-        .then()
+        .then((student) => {
+            //Form에 데이터 채우기 
+            studentForm.name.value = student.name;
+            studentForm.studentNumber.value = student.studentNumber;
+        })
         .catch((error) => {
             console.log('Error : ', error);
             alert(error.message);
