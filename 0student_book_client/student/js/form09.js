@@ -46,9 +46,12 @@ studentForm.addEventListener("submit", function (event) {
     //유효한 데이터 출력하기
     //console.log(studentData);
 
-    //서버로 Student 등록 요청하기
-    createStudent(studentData);
+    if (editingStudentId) {
 
+    } else {
+        //서버로 Student 등록 요청하기
+        createStudent(studentData);
+    }
 });
 
 //데이터 유효성을 체크하는 함수
@@ -236,7 +239,7 @@ function editStudent(studentId) {
             //Form에 데이터 채우기
             studentForm.name.value = student.name;
             studentForm.studentNumber.value = student.studentNumber;
-            if(student.detail) {
+            if (student.detail) {
                 studentForm.address.value = student.detail.address;
                 studentForm.phoneNumber.value = student.detail.phoneNumber;
                 studentForm.email.value = student.detail.email;
@@ -249,7 +252,7 @@ function editStudent(studentId) {
             submitButton.textContent = "학생 수정";
             //취소 버튼을 활성화
             cancelButton.style.display = 'inline-block';
-            
+
         })
         .catch((error) => {
             console.log('Error : ', error);
@@ -258,7 +261,7 @@ function editStudent(studentId) {
 
 }
 
-function resetForm(){
+function resetForm() {
     //form 초기화
     studentForm.reset();
     editingStudentId = null;
