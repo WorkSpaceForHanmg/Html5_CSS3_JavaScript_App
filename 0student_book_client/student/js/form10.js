@@ -8,6 +8,7 @@ const studentForm = document.getElementById("studentForm");
 const studentTableBody = document.getElementById("studentTableBody");
 const cancelButton = studentForm.querySelector('.cancel-btn');
 const submitButton = studentForm.querySelector('button[type="submit"]');
+const formError = document.getElementById("formError");
 
 //Document Load 이벤트 처리하기
 document.addEventListener("DOMContentLoaded", function () {
@@ -306,4 +307,21 @@ function updateStudent(studentId, studentData) {
             console.log('Error : ', error);
             alert(error.message);
         });
+}
+
+//성공 메시지 출력
+function showSuccess(message) {
+    formError.textContent = message;
+    formError.style.display = 'block';
+    formError.style.color = '#28a745';
+}
+//에러 메시지 출력
+function showError(message) {
+    formError.textContent = message;
+    formError.style.display = 'block';
+    formError.style.color = '#dc3545';
+}
+//메시지 초기화
+function clearMessages() {
+    formError.style.display = 'none';
 }
