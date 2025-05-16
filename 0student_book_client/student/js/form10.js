@@ -86,7 +86,7 @@ function validateStudent(student) {// 필수 필드 검사
     }
     // 학번 형식 검사 (예: 영문과 숫자 조합)
     //const studentNumberPattern = /^[A-Za-z0-9]+$/;
-    const studentNumberPattern = /^s\d{5}$/;
+    const studentNumberPattern = /^S\d{5}$/;
     if (!studentNumberPattern.test(student.studentNumber)) {
         alert("학번은 영문과 숫자만 입력 가능합니다.");
         return false;
@@ -127,7 +127,14 @@ function loadStudents() {
         .then((students) => renderStudentTable(students))
         .catch((error) => {
             console.log("Error: " + error);
-            alert("학생 목록을 불러오는데 실패했습니다!.");
+            showError("학생 목록을 불러오는데 실패했습니다!.");
+            studentTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; color: #dc3545;">
+                        오류: 데이터를 불러올 수 없습니다.
+                    </td>
+                </tr>
+            `;
         });
 }
 
@@ -180,7 +187,7 @@ function createStudent(studentData) {
             return response.json();
         })
         .then((result) => {
-            alert("학생이 성공적으로 등록되었습니다!");
+            showSuccess("학생이 성공적으로 등록되었습니다!");
             //studentForm.reset();
             resetForm();
             //목록 새로 고침
@@ -188,7 +195,7 @@ function createStudent(studentData) {
         })
         .catch((error) => {
             console.log('Error : ', error);
-            alert(error.message);
+            showError(error.message);
         });
 }
 
@@ -197,7 +204,7 @@ function deleteStudent(studentId) {
     if (!confirm(`ID = ${studentId} 인 학생을 정말로 삭제하시겠습니까?`)) {
         return;
     }
-    console.log('삭제처리 ...');
+
     fetch(`${API_BASE_URL}/api/students/${studentId}`, {
         method: 'DELETE'
     })
@@ -214,13 +221,13 @@ function deleteStudent(studentId) {
                     throw new Error(errorData.message || '학생 삭제에 실패했습니다.')
                 }
             }
-            alert("학생이 성공적으로 삭제되었습니다!");
+            showSuccess("학생이 성공적으로 삭제되었습니다!");
             //목록 새로 고침
             loadStudents();
         })
         .catch((error) => {
             console.log('Error : ', error);
-            alert(error.message);
+            showError(error.message);
         });
 
 }
@@ -260,7 +267,7 @@ function editStudent(studentId) {
         })
         .catch((error) => {
             console.log('Error : ', error);
-            alert(error.message);
+            showError(error.message);
         });
 
 }
@@ -272,6 +279,7 @@ function resetForm() {
     submitButton.textContent = "학생 등록";
     //취소버튼 사라짐
     cancelButton.style.display = 'none';
+    clearMessages();
 }
 
 // 학생 수정 처리하는 함수
@@ -297,7 +305,7 @@ function updateStudent(studentId, studentData) {
             return response.json();
         })
         .then((result) => {
-            alert("학생이 성공적으로 수정되었습니다!");
+            showSuccess("학생이 성공적으로 수정되었습니다!");
             //등록모드로 초기화
             resetForm();
             //목록 새로 고침
@@ -305,7 +313,7 @@ function updateStudent(studentId, studentData) {
         })
         .catch((error) => {
             console.log('Error : ', error);
-            alert(error.message);
+            showError(error.message);
         });
 }
 
